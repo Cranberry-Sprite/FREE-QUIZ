@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 26.8.0.3 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { font-size: 10pt; font-family: "Liberation Mono", monospace; background: transparent }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot; data-theme=&quot;light&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;&gt;
+&lt;title&gt;Repaso — flashcards and pre-tests&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+:root{
+  --canvas:#F3EEE3;
+  --panel:#EBE4D4;
+  --sheet:#FFFCF6;
+  --ink:#1E2A44;
+  --ink-soft:#6A6F7C;
+  --line:#D7CFB8;
+  --rule:#EDE6D4;
+  --margin-rule:#C45B4A;
+  --pen:#1F3A5F;
+  --pen-soft:#D9E3F0;
+  --mark:#F4D35E;
+  --right:#2F6B4A;
+  --right-soft:#DCEBDF;
+  --wrong:#B54A3C;
+  --wrong-soft:#F3DED8;
+  --wash:rgba(255,252,246,.7);
+  --radius:16px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --shadow:0 1px 0 rgba(30,42,68,.06), 0 18px 40px -24px rgba(30,42,68,.35);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+:root[data-theme=&quot;dark&quot;]{
+  --canvas:#15181C;
+  --panel:#1C2128;
+  --sheet:#232A33;
+  --ink:#E8E6DE;
+  --ink-soft:#9AA1AB;
+  --line:#3A4450;
+  --rule:#2C3440;
+  --margin-rule:#C56B5C;
+  --pen:#E8E6DE;
+  --pen-soft:#2C3642;
+  --mark:#C9A227;
+  --right:#7DCF9A;
+  --right-soft:#24352C;
+  --wrong:#E08A7A;
+  --wrong-soft:#3A2A28;
+  --wash:rgba(28,33,40,.55);
+  --shadow:0 1px 0 rgba(0,0,0,.45), 0 18px 40px -22px rgba(0,0,0,.85);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  height:100%;margin:0;color:var(--ink);
+  font-family:&quot;Newsreader&quot;,Georgia,&quot;Times New Roman&quot;,serif;
+  font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  background-color:var(--canvas);
+  background-image:
+    radial-gradient(1200px 420px at 12% -10%, var(--wash), transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 27px, color-mix(in srgb, var(--line) 35%, transparent) 28px);
+  background-attachment:fixed;
+  transition:background-color .45s var(--ease), color .35s var(--ease);
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2.5px solid var(--pen);outline-offset:2px;border-radius:6px}
+h1,h2,h3,.ui{font-family:&quot;Bricolage Grotesque&quot;,system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif}
+h1,h2,h3{margin:0;letter-spacing:-.015em}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes popIn{
+  from{opacity:0;transform:scale(.96) translateY(8px)}
+  to{opacity:1;transform:none}
+}
+@keyframes toastIn{
+  from{opacity:0;transform:translate(-50%, 16px) scale(.96)}
+  to{opacity:1;transform:translate(-50%, 0) scale(1)}
+}
+@keyframes toastOut{
+  to{opacity:0;transform:translate(-50%, 10px) scale(.98)}
+}
+@keyframes inkGrow{
+  from{transform:scaleX(.4);opacity:.4}
+}
+@keyframes pulseSoft{
+  0%,100%{box-shadow:var(--shadow)}
+  50%{box-shadow:0 1px 0 rgba(30,42,68,.08), 0 22px 48px -18px color-mix(in srgb, var(--pen) 28%, transparent)}
+}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:262px 1fr;grid-template-rows:auto 1fr;height:100%;min-height:0}
+.topbar{
+  grid-column:1/-1;display:flex;align-items:center;gap:14px;
+  padding:12px 20px;background:color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:30;
+}
+.brand{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;position:relative;padding:0 4px}
+.brand::after{
+  content:&quot;&quot;;position:absolute;left:0;right:0;bottom:2px;height:10px;
+  background:var(--mark);opacity:.85;z-index:-1;transform:skewX(-9deg);
+  border-radius:2px;transition:transform .4s var(--ease), opacity .3s ease;
+}
+.brand:hover::after{transform:skewX(-9deg) scaleX(1.06)}
+.brand-note{font-size:14px;color:var(--ink-soft);margin-left:2px}
+.topbar .spacer{flex:1}
+.deck-chip{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft);text-align:right;line-height:1.3;transition:opacity .25s ease}
+.deck-chip b{display:block;font-size:15px;color:var(--ink);font-weight:600}
+.drawer-btn{display:none}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  background:color-mix(in srgb, var(--panel) 92%, transparent);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0;
+}
+.side-head{padding:18px 18px 8px;font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft);display:flex;justify-content:space-between;align-items:baseline;letter-spacing:.04em;text-transform:uppercase}
+.deck-list{flex:1;overflow-y:auto;padding:0 10px 10px;margin:0;list-style:none}
+.deck-list li{animation:fadeUp .45s var(--ease-out) both}
+.deck-list li:nth-child(1){animation-delay:.02s}
+.deck-list li:nth-child(2){animation-delay:.05s}
+.deck-list li:nth-child(3){animation-delay:.08s}
+.deck-list li:nth-child(4){animation-delay:.11s}
+.deck-list li:nth-child(n+5){animation-delay:.14s}
+.deck-item{
+  display:block;width:100%;text-align:left;background:none;border:0;
+  padding:10px 12px 10px 14px;border-radius:12px;border-left:3px solid transparent;
+  font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:15px;
+  transition:background .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
+}
+.deck-item:hover{background:var(--sheet);transform:translateX(2px)}
+.deck-item[aria-current=&quot;true&quot;]{background:var(--pen-soft);border-left-color:var(--pen)}
+.deck-item .meta{display:block;font-size:12px;color:var(--ink-soft);font-family:&quot;Bricolage Grotesque&quot;,sans-serif}
+.side-foot{padding:12px;border-top:1px solid var(--line);display:grid;gap:8px}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:14px;font-weight:600;
+  background:var(--sheet);color:var(--ink);border:1px solid var(--line);
+  padding:9px 14px;border-radius:11px;
+  transition:background .22s var(--ease), border-color .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease), filter .22s ease, color .22s ease;
+}
+.btn:hover{border-color:var(--pen);transform:translateY(-1px);box-shadow:0 8px 18px -14px color-mix(in srgb, var(--pen) 55%, transparent)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.primary{background:var(--pen);color:var(--sheet);border-color:var(--pen)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--wrong);border-color:transparent}
+.btn.danger:hover{border-color:var(--wrong);background:var(--wrong-soft)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.wide{width:100%}
+
+/* ---------- main ---------- */
+.main{min-width:0;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.tabs{
+  display:flex;gap:2px;padding:14px 22px 0;border-bottom:1px solid var(--line);
+  background:color-mix(in srgb, var(--canvas) 82%, transparent);
+  backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+}
+.tab{
+  font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:14px;font-weight:600;
+  background:none;border:0;padding:10px 14px;border-bottom:3px solid transparent;color:var(--ink-soft);
+  position:relative;transition:color .25s var(--ease);
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected=&quot;true&quot;]{color:var(--ink);border-bottom-color:var(--pen)}
+.tab[aria-selected=&quot;true&quot;]::after{
+  content:&quot;&quot;;position:absolute;left:14px;right:14px;bottom:-1px;height:3px;
+  background:var(--mark);border-radius:99px 99px 0 0;animation:inkGrow .35s var(--ease);
+  transform-origin:left center;
+}
+.panel{padding:26px 22px 60px;max-width:820px;width:100%;margin:0 auto;flex:1}
+.panel.is-enter &gt; *{animation:fadeUp .5s var(--ease-out) both}
+.panel.is-enter &gt; *:nth-child(2){animation-delay:.05s}
+.panel.is-enter &gt; *:nth-child(3){animation-delay:.1s}
+.panel.is-enter &gt; *:nth-child(4){animation-delay:.14s}
+.panel.is-enter &gt; *:nth-child(n+5){animation-delay:.18s}
+
+/* ---------- flashcard ---------- */
+.stage{perspective:1600px;margin:8px 0 18px}
+.card{
+  position:relative;width:100%;min-height:330px;
+  transform-style:preserve-3d;transition:transform .62s var(--ease);
+  border:0;background:none;padding:0;display:block;
+}
+.card.is-flipped{transform:rotateY(180deg)}
+.card:hover .face{box-shadow:0 1px 0 rgba(30,42,68,.06), 0 24px 44px -20px color-mix(in srgb, var(--pen) 32%, transparent)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--sheet);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:38px 34px 38px 62px;text-align:center;overflow:hidden;
+  transition:box-shadow .35s var(--ease);
+}
+.face::before{
+  content:&quot;&quot;;position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--rule) 31px 32px);
+  opacity:.75;
+}
+.face::after{content:&quot;&quot;;position:absolute;top:0;bottom:0;left:46px;width:1.5px;background:var(--margin-rule);opacity:.7}
+.face.back{transform:rotateY(180deg)}
+.face-label{
+  position:absolute;top:14px;right:18px;font-family:&quot;Bricolage Grotesque&quot;,sans-serif;
+  font-size:12px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;
+}
+.term{font-size:clamp(26px,4.6vw,40px);font-weight:600;line-height:1.2;position:relative;z-index:1;max-width:22ch}
+.term .swipe{
+  background:linear-gradient(var(--mark),var(--mark)) no-repeat center 78%/100% 38%;
+  padding:0 .12em;border-radius:3px;
+  background-size:100% 38%;
+  animation:fadeIn .4s var(--ease);
+}
+.definition{font-size:clamp(18px,2.6vw,23px);line-height:1.5;max-width:40ch;position:relative;z-index:1}
+.flip-hint{position:absolute;bottom:14px;left:0;right:0;font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:12px;color:var(--ink-soft);letter-spacing:.01em}
+.explainer{margin-top:14px;font-size:15px;color:var(--ink-soft);max-width:44ch;position:relative;z-index:1;text-align:left;line-height:1.5}
+
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.controls .grow{flex:1;min-width:8px}
+.counter{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:14px;color:var(--ink-soft);min-width:78px;text-align:center}
+.meter{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:16px 0 6px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg, var(--pen), color-mix(in srgb, var(--mark) 70%, var(--pen)));border-radius:99px;transition:width .55s var(--ease)}
+.meter-label{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft);display:flex;justify-content:space-between}
+
+/* ---------- editor ---------- */
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.card-row{
+  display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:start;
+  padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);margin-bottom:8px;
+  transition:border-color .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease);
+  animation:fadeUp .4s var(--ease-out) both;
+}
+.card-row:hover{border-color:color-mix(in srgb, var(--pen) 45%, var(--line));transform:translateY(-1px);box-shadow:var(--shadow)}
+.card-row textarea{
+  width:100%;min-height:52px;resize:vertical;background:transparent;border:1px solid transparent;
+  border-radius:8px;padding:6px 8px;font-size:16px;transition:border-color .2s ease, background .2s ease;
+}
+.card-row textarea:hover{border-color:var(--line)}
+.card-row textarea:focus{border-color:var(--pen);outline:none;background:var(--canvas)}
+.card-row .known-dot{width:9px;height:9px;border-radius:50%;background:var(--line);margin:14px 0 0;transition:background .3s ease, transform .3s var(--ease)}
+.card-row.known .known-dot{background:var(--right);transform:scale(1.15)}
+.icon-btn{background:none;border:0;color:var(--ink-soft);padding:8px;border-radius:8px;font-size:15px;transition:color .2s ease, background .2s ease, transform .2s ease}
+.icon-btn:hover{color:var(--wrong);background:var(--wrong-soft);transform:rotate(8deg)}
+.box{background:var(--sheet);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:0 0 20px;box-shadow:var(--shadow);transition:border-color .25s ease}
+.box h3{font-size:16px;margin-bottom:6px}
+.box p{margin:0 0 12px;color:var(--ink-soft);font-size:15px}
+textarea.notes{width:100%;min-height:130px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--canvas);font-size:16px;resize:vertical;transition:border-color .22s ease, box-shadow .22s ease}
+textarea.notes:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+.field{display:grid;gap:5px;margin-bottom:12px}
+.field label{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft)}
+.field input,.field select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--canvas);width:100%;transition:border-color .22s ease, box-shadow .22s ease}
+.field input:focus,.field select:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+
+/* ---------- pre-test ---------- */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:14px;padding:8px 13px;border-radius:99px;
+  border:1px solid var(--line);background:var(--sheet);
+  transition:background .22s var(--ease), border-color .22s var(--ease), transform .22s var(--ease), color .22s ease;
+}
+.chip:hover{transform:translateY(-1px);border-color:var(--pen)}
+.chip[aria-pressed=&quot;true&quot;]{background:var(--pen-soft);border-color:var(--pen);color:var(--ink)}
+.q-prompt{font-size:clamp(21px,3.2vw,28px);line-height:1.35;margin:6px 0 20px;max-width:34ch}
+.q-kind{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.options{display:grid;gap:9px;margin-bottom:16px}
+.option{
+  text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:12px;
+  padding:13px 16px;font-size:17px;display:flex;gap:11px;align-items:baseline;
+  transition:border-color .22s var(--ease), background .22s var(--ease), transform .22s var(--ease), box-shadow .22s var(--ease);
+  animation:fadeUp .42s var(--ease-out) both;
+}
+.option:nth-child(1){animation-delay:.04s}
+.option:nth-child(2){animation-delay:.09s}
+.option:nth-child(3){animation-delay:.14s}
+.option:nth-child(4){animation-delay:.19s}
+.option:hover:not([disabled]){border-color:var(--pen);transform:translateX(4px);box-shadow:var(--shadow)}
+.option .key{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:13px;color:var(--ink-soft);min-width:14px}
+.option.picked{border-color:var(--pen);background:var(--pen-soft)}
+.option.correct{border-color:var(--right);background:var(--right-soft)}
+.option.incorrect{border-color:var(--wrong);background:var(--wrong-soft)}
+.option[disabled]{cursor:default;opacity:1;transform:none}
+.verdict{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:15px;font-weight:600;margin:4px 0 14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;animation:popIn .4s var(--ease)}
+.verdict.ok{color:var(--right)}
+.verdict.no{color:var(--wrong)}
+.verdict span{font-family:&quot;Newsreader&quot;,serif;font-weight:400;color:var(--ink);font-size:17px}
+.answer-input{width:100%;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--sheet);font-size:19px;margin-bottom:14px;transition:border-color .22s ease, box-shadow .22s ease}
+.answer-input:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+.score{font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:clamp(46px,9vw,74px);font-weight:800;line-height:1;letter-spacing:-.04em;animation:popIn .55s var(--ease)}
+.score small{font-size:20px;font-weight:400;color:var(--ink-soft);letter-spacing:0}
+.review{border-top:1px solid var(--line);padding:14px 0;display:grid;gap:4px;animation:fadeUp .4s var(--ease-out) both}
+.review .r-term{font-weight:600}
+.review .r-yours{font-size:15px;color:var(--wrong)}
+.review .r-def{font-size:16px;color:var(--ink-soft)}
+
+/* ---------- misc ---------- */
+.empty{text-align:center;padding:52px 18px;color:var(--ink-soft);animation:fadeUp .5s var(--ease-out)}
+.empty h2{font-size:24px;color:var(--ink);margin-bottom:8px}
+.empty p{max-width:42ch;margin:0 auto 18px}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  background:var(--ink);color:var(--canvas);padding:11px 18px;border-radius:99px;
+  font-family:&quot;Bricolage Grotesque&quot;,sans-serif;font-size:14px;z-index:90;max-width:90vw;text-align:center;
+  animation:toastIn .4s var(--ease) both;box-shadow:var(--shadow);
+}
+.toast.is-out{animation:toastOut .28s ease forwards}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.overlay{
+  display:block;position:fixed;inset:0;background:rgba(20,28,40,.42);z-index:50;
+  opacity:0;pointer-events:none;visibility:hidden;
+  transition:opacity .32s var(--ease), visibility .32s var(--ease);
+}
+body.drawer .overlay{opacity:1;pointer-events:auto;visibility:visible}
+@media (min-width:861px){
+  .overlay{display:none}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .sidebar{
+    position:fixed;top:0;bottom:0;left:0;width:272px;z-index:60;transform:translateX(-102%);
+    transition:transform .38s var(--ease);padding-top:env(safe-area-inset-top,0px);
+    box-shadow:18px 0 40px -28px rgba(30,42,68,.45);
+  }
+  body.drawer .sidebar{transform:none}
+  .drawer-btn{display:inline-block}
+  .panel{padding:20px 16px 70px}
+  .tabs{padding:12px 12px 0;overflow-x:auto}
+  .card-row{grid-template-columns:1fr auto}
+  .face{padding:34px 22px 34px 52px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;animation-delay:0s !important}
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+  &lt;header class=&quot;topbar&quot;&gt;
+    &lt;button class=&quot;btn ghost drawer-btn&quot; id=&quot;drawerBtn&quot; aria-label=&quot;Show decks&quot;&gt;Decks&lt;/button&gt;
+    &lt;div class=&quot;brand&quot;&gt;Repaso&lt;/div&gt;
+    &lt;div class=&quot;brand-note&quot;&gt;study hall · flashcards &amp;amp; pre-tests&lt;/div&gt;
+    &lt;div class=&quot;spacer&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;deck-chip&quot; id=&quot;deckChip&quot;&gt;&lt;/div&gt;
+    &lt;button class=&quot;btn ghost&quot; id=&quot;themeBtn&quot; aria-label=&quot;Switch theme&quot;&gt;Lights&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;nav class=&quot;sidebar&quot; id=&quot;sidebar&quot; aria-label=&quot;Decks&quot;&gt;
+    &lt;div class=&quot;side-head&quot;&gt;&lt;span&gt;Your decks&lt;/span&gt;&lt;span id=&quot;deckCount&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;ul class=&quot;deck-list&quot; id=&quot;deckList&quot;&gt;&lt;/ul&gt;
+    &lt;div class=&quot;side-foot&quot;&gt;
+      &lt;button class=&quot;btn primary wide&quot; id=&quot;newDeckBtn&quot;&gt;New deck&lt;/button&gt;
+      &lt;button class=&quot;btn ghost wide&quot; id=&quot;sampleDeckBtn&quot;&gt;Add a starter deck&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/nav&gt;
+
+  &lt;main class=&quot;main&quot;&gt;
+    &lt;div class=&quot;tabs&quot; role=&quot;tablist&quot; id=&quot;tabs&quot;&gt;
+      &lt;button class=&quot;tab&quot; role=&quot;tab&quot; data-tab=&quot;study&quot; aria-selected=&quot;true&quot;&gt;Flashcards&lt;/button&gt;
+      &lt;button class=&quot;tab&quot; role=&quot;tab&quot; data-tab=&quot;test&quot; aria-selected=&quot;false&quot;&gt;Pre-test&lt;/button&gt;
+      &lt;button class=&quot;tab&quot; role=&quot;tab&quot; data-tab=&quot;edit&quot; aria-selected=&quot;false&quot;&gt;Cards&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;panel&quot; id=&quot;panel&quot;&gt;&lt;/div&gt;
+  &lt;/main&gt;
+&lt;/div&gt;
+&lt;div class=&quot;overlay&quot; id=&quot;overlay&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;sr&quot; id=&quot;live&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+
+&lt;script&gt;
+(function(){
+&quot;use strict&quot;;
+
+/* ================= helpers ================= */
+const $  = (s,r)=&gt; (r||document).querySelector(s);
+const $$ = (s,r)=&gt; Array.from((r||document).querySelectorAll(s));
+const uid = ()=&gt; Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const esc = s =&gt; String(s==null?&quot;&quot;:s).replace(/[&amp;&lt;&gt;&quot;']/g,c=&gt;({&quot;&amp;&quot;:&quot;&amp;amp;&quot;,&quot;&lt;&quot;:&quot;&amp;lt;&quot;,&quot;&gt;&quot;:&quot;&amp;gt;&quot;,'&quot;':&quot;&amp;quot;&quot;,&quot;'&quot;:&quot;&amp;#39;&quot;}[c]));
+const clone = o =&gt; JSON.parse(JSON.stringify(o));
+function shuffle(a){const x=a.slice();for(let i=x.length-1;i&gt;0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+function say(msg){ const l=$(&quot;#live&quot;); if(l) l.textContent=msg; }
+let toastT;
+function toast(msg){
+  clearTimeout(toastT);
+  let t=$(&quot;#toast&quot;);
+  if(!t){t=document.createElement(&quot;div&quot;);t.className=&quot;toast&quot;;t.id=&quot;toast&quot;;document.body.appendChild(t);}
+  t.classList.remove(&quot;is-out&quot;);
+  t.textContent=msg;
+  toastT=setTimeout(()=&gt;{
+    t.classList.add(&quot;is-out&quot;);
+    setTimeout(()=&gt;t.remove(),280);
+  },3200);
+}
+
+/* ================= state ================= */
+const state = { decks:[], deckId:null, tab:&quot;study&quot; };
+const study = { order:[], i:0, flipped:false, explain:&quot;&quot; };
+let quiz = null;
+let mounted = &quot;&quot;;
+
+const deck = ()=&gt; state.decks.find(d=&gt;d.id===state.deckId) || null;
+const mastered = d =&gt; d.cards.filter(c=&gt;c.known).length;
+
+/* ================= storage ================= */
+let DB=null, SAMPLE=null, migrated=false;
+const dirty = new Map(), writing = new Set();
+let flushTimer=null;
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(&quot;repaso.decks&quot;);
+    if(raw){ const d=JSON.parse(raw); if(Array.isArray(d)) state.decks=d; }
+  }catch(e){ /* storage unavailable — run from memory */ }
+}
+function saveLocal(){
+  try{ localStorage.setItem(&quot;repaso.decks&quot;, JSON.stringify(state.decks)); }catch(e){}
+}
+function touch(d){
+  d.updated = Date.now();
+  saveLocal();
+  if(!DB) return;
+  dirty.set(d.id, d);
+  clearTimeout(flushTimer);
+  flushTimer = setTimeout(flush, 450);
+}
+async function flush(){
+  if(!DB) return;
+  for(const [id,d] of Array.from(dirty)){
+    if(writing.has(id)) continue;
+    dirty.delete(id); writing.add(id);
+    try{
+      const body = clone(d); delete body.id;
+      await DB.doc(&quot;decks/&quot;+id).set(body);
+    }catch(e){
+      if(e &amp;&amp; e.code===&quot;quota_exceeded&quot;) toast(&quot;Storage is full — delete a deck to make room.&quot;);
+      else if(e &amp;&amp; e.code!==&quot;revoked&quot;) toast(&quot;That change didn't save. It's still on this device.&quot;);
+    }finally{ writing.delete(id); }
+  }
+  if(dirty.size) flushTimer=setTimeout(flush,450);
+}
+async function removeDeck(id){
+  state.decks = state.decks.filter(d=&gt;d.id!==id);
+  dirty.delete(id); saveLocal();
+  if(state.deckId===id) state.deckId = state.decks[0] ? state.decks[0].id : null;
+  render();
+  if(DB){ try{ await DB.doc(&quot;decks/&quot;+id).delete(); }catch(e){ toast(&quot;Couldn't delete that deck on the server.&quot;); } }
+}
+
+async function connect(){
+  const use = (window.claude &amp;&amp; window.claude.use) ? window.claude.use.bind(window.claude) : null;
+  if(!use) return;
+  try{ SAMPLE = await use(&quot;sample&quot;); }catch(e){ SAMPLE=null; }
+  if(SAMPLE &amp;&amp; state.tab===&quot;edit&quot;) render();
+  let db=null;
+  try{ db = await use(&quot;db&quot;); }catch(e){ db=null; }
+  if(!db) return;
+  DB = db;
+  DB.collection(&quot;decks&quot;).onSnapshot(snap=&gt;{
+    if(!migrated){
+      migrated = true;
+      if(snap.empty &amp;&amp; state.decks.length){ state.decks.forEach(touch); return; }
+    }
+    const incoming = snap.docs.map(doc=&gt;{
+      const body = clone(doc.data()||{});
+      body.id = doc.id;
+      body.cards = Array.isArray(body.cards)? body.cards : [];
+      return body;
+    });
+    // keep any deck whose write is still in flight
+    const held = state.decks.filter(d=&gt; dirty.has(d.id) || writing.has(d.id));
+    const map = new Map(incoming.map(d=&gt;[d.id,d]));
+    held.forEach(d=&gt; map.set(d.id,d));
+    state.decks = Array.from(map.values()).sort((a,b)=&gt;(b.updated||0)-(a.updated||0));
+    if(!deck()) state.deckId = state.decks[0] ? state.decks[0].id : null;
+    saveLocal();
+    render();
+  }, err=&gt;{
+    if(err &amp;&amp; err.code!==&quot;revoked&quot;) toast(&quot;Sync stopped. Your work stays on this device.&quot;);
+  });
+}
+
+/* ================= deck actions ================= */
+function makeDeck(name, cards){
+  const d = { id:uid(), name:name||&quot;Untitled deck&quot;, cards:(cards||[]).map(c=&gt;({id:uid(),term:c.term,def:c.def,known:false})), created:Date.now(), updated:Date.now() };
+  state.decks.unshift(d);
+  state.deckId = d.id;
+  touch(d);
+  return d;
+}
+function newDeck(){
+  const name = prompt(&quot;Name this deck&quot;, &quot;New deck&quot;);
+  if(name===null) return;
+  makeDeck(name.trim()||&quot;New deck&quot;, []);
+  state.tab=&quot;edit&quot;; mounted=&quot;&quot;; render();
+}
+const STARTER = [
+  {term:&quot;Mitochondrion&quot;, def:&quot;The organelle that produces most of a cell's ATP through cellular respiration.&quot;},
+  {term:&quot;Osmosis&quot;, def:&quot;Movement of water across a semipermeable membrane from low to high solute concentration.&quot;},
+  {term:&quot;Photosynthesis&quot;, def:&quot;The process plants use to turn light, water, and carbon dioxide into glucose and oxygen.&quot;},
+  {term:&quot;Homeostasis&quot;, def:&quot;Keeping a stable internal environment despite changes outside the organism.&quot;},
+  {term:&quot;Enzyme&quot;, def:&quot;A protein that speeds up a chemical reaction without being used up by it.&quot;},
+  {term:&quot;Mitosis&quot;, def:&quot;Cell division that produces two identical daughter cells, each with the full chromosome set.&quot;},
+  {term:&quot;Meiosis&quot;, def:&quot;Cell division that produces four gametes, each with half the chromosome number.&quot;},
+  {term:&quot;Diffusion&quot;, def:&quot;Net movement of particles from an area of high concentration to low concentration.&quot;}
+];
+
+/* ================= render ================= */
+function render(){
+  renderSidebar();
+  renderChip();
+  $$(&quot;#tabs .tab&quot;).forEach(t=&gt; t.setAttribute(&quot;aria-selected&quot;, String(t.dataset.tab===state.tab)));
+  renderPanel();
+}
+function enterPanel(){
+  const p=$(&quot;#panel&quot;); if(!p) return;
+  p.classList.remove(&quot;is-enter&quot;);
+  void p.offsetWidth;
+  p.classList.add(&quot;is-enter&quot;);
+}
+function renderSidebar(){
+  const list = $(&quot;#deckList&quot;);
+  $(&quot;#deckCount&quot;).textContent = state.decks.length ? state.decks.length : &quot;&quot;;
+  if(!state.decks.length){
+    list.innerHTML = '&lt;li style=&quot;padding:14px 12px;color:var(--ink-soft);font-size:15px&quot;&gt;No decks yet.&lt;/li&gt;';
+    return;
+  }
+  list.innerHTML = state.decks.map(d=&gt;`
+    &lt;li&gt;&lt;button class=&quot;deck-item&quot; data-deck=&quot;${d.id}&quot; aria-current=&quot;${d.id===state.deckId}&quot;&gt;
+      ${esc(d.name)}
+      &lt;span class=&quot;meta&quot;&gt;${d.cards.length} card${d.cards.length===1?&quot;&quot;:&quot;s&quot;} · ${mastered(d)} known&lt;/span&gt;
+    &lt;/button&gt;&lt;/li&gt;`).join(&quot;&quot;);
+}
+function renderChip(){
+  const d = deck();
+  $(&quot;#deckChip&quot;).innerHTML = d
+    ? `&lt;b&gt;${esc(d.name)}&lt;/b&gt;${d.cards.length} cards · ${mastered(d)} marked known`
+    : &quot;&quot;;
+}
+function renderPanel(){
+  const key = state.tab+&quot;:&quot;+(state.deckId||&quot;none&quot;);
+  if(mounted!==key){ mounted=key; buildPanel(); }
+  else if(state.tab===&quot;study&quot;) paintCard();
+}
+function buildPanel(){
+  const p = $(&quot;#panel&quot;);
+  const d = deck();
+  if(!d){
+    if(state.tab===&quot;test&quot;){ buildTest(null); enterPanel(); return; }
+    p.innerHTML = `&lt;div class=&quot;empty&quot;&gt;
+      &lt;h2&gt;Start with a deck&lt;/h2&gt;
+      &lt;p&gt;A deck is one subject or one exam. Add terms and their meanings, then flip through them or take a pre-test.&lt;/p&gt;
+      &lt;div class=&quot;row&quot; style=&quot;justify-content:center&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; data-act=&quot;new-deck&quot;&gt;New deck&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; data-act=&quot;starter&quot;&gt;Add a starter deck&lt;/button&gt;
+      &lt;/div&gt;&lt;/div&gt;`;
+    enterPanel();
+    return;
+  }
+  if(state.tab===&quot;study&quot;) buildStudy(d);
+  else if(state.tab===&quot;test&quot;) buildTest(d);
+  else buildEdit(d);
+  enterPanel();
+}
+
+/* ---------- flashcards ---------- */
+function buildStudy(d){
+  const p=$(&quot;#panel&quot;);
+  if(!d.cards.length){
+    p.innerHTML = `&lt;div class=&quot;empty&quot;&gt;&lt;h2&gt;This deck is empty&lt;/h2&gt;
+      &lt;p&gt;Add a few cards first — or paste your notes and let Claude draft them for you.&lt;/p&gt;
+      &lt;button class=&quot;btn primary&quot; data-act=&quot;go-edit&quot;&gt;Add cards&lt;/button&gt;&lt;/div&gt;`;
+    return;
+  }
+  if(!study.order.length || study.order.some(id=&gt;!d.cards.find(c=&gt;c.id===id))){
+    study.order = d.cards.map(c=&gt;c.id); study.i=0; study.flipped=false;
+  }
+  p.innerHTML = `
+    &lt;div class=&quot;meter&quot;&gt;&lt;i id=&quot;meterFill&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;div class=&quot;meter-label&quot;&gt;&lt;span id=&quot;meterText&quot;&gt;&lt;/span&gt;&lt;span id=&quot;meterRight&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;stage&quot;&gt;
+      &lt;button class=&quot;card&quot; id=&quot;card&quot; aria-label=&quot;Flashcard — press to flip&quot;&gt;
+        &lt;div class=&quot;face front&quot;&gt;
+          &lt;span class=&quot;face-label&quot;&gt;Term&lt;/span&gt;
+          &lt;div class=&quot;term&quot; id=&quot;cardTerm&quot;&gt;&lt;/div&gt;
+          &lt;span class=&quot;flip-hint&quot;&gt;Click or press space to flip&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;face back&quot;&gt;
+          &lt;span class=&quot;face-label&quot;&gt;Meaning&lt;/span&gt;
+          &lt;div class=&quot;definition&quot; id=&quot;cardDef&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;explainer&quot; id=&quot;cardExplain&quot;&gt;&lt;/div&gt;
+          &lt;span class=&quot;flip-hint&quot;&gt;Press 1 to study again, 2 if you know it&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;controls&quot;&gt;
+      &lt;button class=&quot;btn&quot; data-act=&quot;prev&quot;&gt;Back&lt;/button&gt;
+      &lt;span class=&quot;counter&quot; id=&quot;counter&quot;&gt;&lt;/span&gt;
+      &lt;button class=&quot;btn&quot; data-act=&quot;next&quot;&gt;Next&lt;/button&gt;
+      &lt;span class=&quot;grow&quot;&gt;&lt;/span&gt;
+      &lt;button class=&quot;btn&quot; data-act=&quot;again&quot;&gt;Study again&lt;/button&gt;
+      &lt;button class=&quot;btn primary&quot; data-act=&quot;got&quot;&gt;I know this&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;controls&quot; style=&quot;margin-top:14px;justify-content:flex-start&quot;&gt;
+      &lt;button class=&quot;btn ghost&quot; data-act=&quot;shuffle&quot;&gt;Shuffle&lt;/button&gt;
+      &lt;button class=&quot;btn ghost&quot; data-act=&quot;unknown-only&quot;&gt;Only unknown cards&lt;/button&gt;
+      &lt;button class=&quot;btn ghost&quot; data-act=&quot;reset-known&quot;&gt;Clear all &quot;known&quot; marks&lt;/button&gt;
+      ${SAMPLE?'&lt;button class=&quot;btn ghost&quot; data-act=&quot;explain&quot;&gt;Explain this card&lt;/button&gt;':''}
+    &lt;/div&gt;`;
+  paintCard();
+}
+function currentCard(){
+  const d=deck(); if(!d) return null;
+  const id = study.order[study.i];
+  return d.cards.find(c=&gt;c.id===id) || null;
+}
+function paintCard(){
+  const d=deck(); const c=currentCard();
+  if(!d || !c) return;
+  const card=$(&quot;#card&quot;); if(!card) return;
+  const apply=()=&gt;{
+    $(&quot;#cardTerm&quot;).innerHTML = `&lt;span class=&quot;swipe&quot;&gt;${esc(c.term||&quot;(no term)&quot;)}&lt;/span&gt;`;
+    $(&quot;#cardDef&quot;).textContent = c.def || &quot;(no meaning yet)&quot;;
+    $(&quot;#cardExplain&quot;).textContent = study.explain || &quot;&quot;;
+  };
+  if(card.classList.contains(&quot;is-flipped&quot;) &amp;&amp; !study.flipped){
+    card.classList.remove(&quot;is-flipped&quot;);
+    setTimeout(apply, 300);
+  }else{
+    card.classList.toggle(&quot;is-flipped&quot;, study.flipped);
+    apply();
+  }
+  $(&quot;#counter&quot;).textContent = (study.i+1)+&quot; / &quot;+study.order.length;
+  const known = mastered(d), total = d.cards.length;
+  $(&quot;#meterFill&quot;).style.width = total? Math.round(known/total*100)+&quot;%&quot; : &quot;0%&quot;;
+  $(&quot;#meterText&quot;).textContent = known+&quot; of &quot;+total+&quot; marked known&quot;;
+  $(&quot;#meterRight&quot;).textContent = c.known ? &quot;You marked this one known&quot; : &quot;&quot;;
+}
+function moveCard(step){
+  if(!study.order.length) return;
+  study.i = (study.i + step + study.order.length) % study.order.length;
+  study.flipped=false; study.explain=&quot;&quot;;
+  paintCard();
+  say(&quot;Card &quot;+(study.i+1)+&quot; of &quot;+study.order.length);
+}
+function markCard(known){
+  const d=deck(), c=currentCard(); if(!d||!c) return;
+  c.known = known; touch(d);
+  renderSidebar(); renderChip();
+  moveCard(1);
+}
+async function explainCard(){
+  const c=currentCard(); if(!c||!SAMPLE) return;
+  study.flipped = true; paintCard();
+  const box=$(&quot;#cardExplain&quot;); if(!box) return;
+  box.textContent = &quot;Thinking…&quot;;
+  try{
+    const res = await SAMPLE(
+      &quot;Explain this study term to a student in two short sentences. Plain words, one concrete example. No preamble.\n\n&quot;+
+      &quot;Term: &quot;+c.term+&quot;\nMeaning given: &quot;+c.def,
+      { modelTier:&quot;quick&quot;, onText:({text})=&gt;{ const b=$(&quot;#cardExplain&quot;); if(b) b.textContent=text; } }
+    );
+    study.explain = res.text;
+  }catch(e){
+    study.explain = &quot;&quot;;
+    const b=$(&quot;#cardExplain&quot;); if(b) b.textContent=&quot;&quot;;
+    if(e.code===&quot;not_granted&quot;||e.code===&quot;sampling_disabled&quot;) toast(&quot;Claude isn't available for this page.&quot;);
+    else if(e.code===&quot;rate_limited&quot;) toast(&quot;Too many requests — try again in a minute.&quot;);
+    else if(e.code!==&quot;cancelled&quot;) toast(&quot;Couldn't get an explanation just now.&quot;);
+  }
+}
+
+/* ---------- pre-test ---------- */
+function lessonBox(){
+  if(!SAMPLE) return &quot;&quot;;
+  const opts=[5,10,15,20,25];
+  return `&lt;div class=&quot;box&quot;&gt;
+    &lt;h3&gt;Make a pre-test from your lesson&lt;/h3&gt;
+    &lt;p&gt;Paste your notes, a textbook section, or lesson text. Claude reads it and builds the pre-test straight away — no need to write flashcards first.&lt;/p&gt;
+    &lt;textarea class=&quot;notes&quot; id=&quot;lessonNotes&quot; placeholder=&quot;Paste your lesson here…&quot;&gt;&lt;/textarea&gt;
+    &lt;div class=&quot;field&quot; style=&quot;max-width:220px;margin-top:12px&quot;&gt;
+      &lt;label for=&quot;lessonCount&quot;&gt;Number of questions&lt;/label&gt;
+      &lt;select id=&quot;lessonCount&quot; style=&quot;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--canvas);width:100%&quot;&gt;
+        ${opts.map(n=&gt;`&lt;option value=&quot;${n}&quot; ${n===10?&quot;selected&quot;:&quot;&quot;}&gt;${n} questions&lt;/option&gt;`).join(&quot;&quot;)}
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:6px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; data-act=&quot;gen-test&quot;&gt;Generate pre-test&lt;/button&gt;
+      &lt;span id=&quot;genStatus&quot; style=&quot;color:var(--ink-soft);font-size:15px&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;`;
+}
+function buildTest(d){
+  const p=$(&quot;#panel&quot;);
+  if(!d || d.cards.length&lt;2){
+    const heading = d ? &quot;Add at least two cards&quot; : &quot;No deck yet&quot;;
+    const body = d
+      ? &quot;A pre-test needs a few cards to build questions and wrong choices from. Add cards yourself, or paste a lesson above and Claude will build them.&quot;
+      : SAMPLE
+        ? &quot;Paste a lesson above and Claude will build a deck and a pre-test from it. Or make a deck yourself first.&quot;
+        : &quot;Add a deck with a few cards first.&quot;;
+    p.innerHTML = lessonBox() + `&lt;div class=&quot;empty&quot;&gt;&lt;h2&gt;${heading}&lt;/h2&gt;
+      &lt;p&gt;${body}&lt;/p&gt;
+      &lt;button class=&quot;btn ${SAMPLE?'':'primary'}&quot; data-act=&quot;${d?'go-edit':'new-deck'}&quot;&gt;${d?'Add cards':'New deck'}&lt;/button&gt;&lt;/div&gt;`;
+    return;
+  }
+  if(!quiz || quiz.deckId!==d.id) quiz = { deckId:d.id, stage:&quot;setup&quot;, cfg:{count:Math.min(10,d.cards.length), types:[&quot;mc&quot;,&quot;tf&quot;,&quot;written&quot;]}, qs:[], i:0, results:[] };
+  if(quiz.stage===&quot;setup&quot;) return paintSetup(d);
+  if(quiz.stage===&quot;run&quot;) return paintQuestion();
+  return paintResults(d);
+}
+async function generateTestFromLesson(){
+  if(!SAMPLE) return;
+  const ta = $(&quot;#lessonNotes&quot;);
+  const notes = (ta &amp;&amp; ta.value || &quot;&quot;).trim();
+  const status = $(&quot;#genStatus&quot;);
+  const countSel = $(&quot;#lessonCount&quot;);
+  const wanted = countSel ? Math.max(3, Math.min(30, Number(countSel.value)||10)) : 10;
+  if(notes.length&lt;40){ if(status) status.textContent=&quot;Paste a bit more text first.&quot;; return; }
+  const btn = $('[data-act=&quot;gen-test&quot;]');
+  if(btn) btn.disabled=true;
+  if(status) status.textContent=&quot;Reading your lesson…&quot;;
+  try{
+    const out = await SAMPLE.json(
+      &quot;You are building a pre-test from a student's lesson notes.\n&quot;+
+      &quot;Write &quot;+wanted+&quot; flashcard-style term/definition pairs covering the most testable points in the notes — &quot;+
+      &quot;as many distinct, well-supported pairs as the notes allow, up to &quot;+wanted+&quot;. &quot;+
+      &quot;Each pair has a \&quot;term\&quot; (a name, concept, date, or short question) and a \&quot;definition\&quot; (one or two plain &quot;+
+      &quot;sentences answering it), using only facts stated in the notes. Write in the same language as the notes.\n&quot;+
+      &quot;Reply with only a JSON array, like [{\&quot;term\&quot;:\&quot;Osmosis\&quot;,\&quot;definition\&quot;:\&quot;Movement of water across a membrane.\&quot;}]\n\n&quot;+
+      &quot;Notes:\n&quot;+notes.slice(0,6000)
+    );
+    const rows = (Array.isArray(out)?out:[])
+      .map(r=&gt;({term:String(r&amp;&amp;r.term||&quot;&quot;).trim(), def:String(r&amp;&amp;(r.definition||r.def)||&quot;&quot;).trim()}))
+      .filter(r=&gt;r.term&amp;&amp;r.def);
+    if(rows.length&lt;2){
+      if(status) status.textContent=&quot;Couldn't find enough testable points in that. Try a longer excerpt.&quot;;
+      return;
+    }
+    let d = deck();
+    if(!d) d = makeDeck(&quot;Pre-test from your notes&quot;, rows);
+    else{ rows.forEach(r=&gt; d.cards.push({id:uid(),term:r.term,def:r.def,known:false})); touch(d); }
+    quiz = { deckId:d.id, stage:&quot;setup&quot;, cfg:{count:Math.min(wanted,rows.length), types:[&quot;mc&quot;,&quot;tf&quot;,&quot;written&quot;]}, qs:[], i:0, results:[] };
+    startTest();
+    toast(rows.length+&quot; questions ready&quot;);
+  }catch(e){
+    if(!status) return;
+    if(e.code===&quot;not_granted&quot;||e.code===&quot;sampling_disabled&quot;) status.textContent=&quot;Claude isn't available for this page.&quot;;
+    else if(e.code===&quot;rate_limited&quot;) status.textContent=&quot;Too many requests — wait a minute and try again.&quot;;
+    else if(e.code===&quot;prompt_too_large&quot;) status.textContent=&quot;That's a lot of text. Paste a shorter excerpt.&quot;;
+    else if(e.code===&quot;invalid_json&quot;) status.textContent=&quot;The draft came back malformed. Try again.&quot;;
+    else status.textContent=&quot;That didn't work. Try again.&quot;;
+  }finally{
+    const b=$('[data-act=&quot;gen-test&quot;]'); if(b) b.disabled=false;
+  }
+}
+function paintSetup(d){
+  const raw = [5,10,15,20,25,30,40,50,d.cards.length];
+  const counts = raw.filter(v=&gt;v&gt;0 &amp;&amp; v&lt;=d.cards.length).filter((v,i,a)=&gt;a.indexOf(v)===i).sort((a,b)=&gt;a-b);
+  const types = [[&quot;mc&quot;,&quot;Multiple choice&quot;],[&quot;tf&quot;,&quot;True or false&quot;],[&quot;written&quot;,&quot;Type the answer&quot;]];
+  $(&quot;#panel&quot;).innerHTML = `
+    &lt;h2 style=&quot;font-size:24px;margin-bottom:6px&quot;&gt;Pre-test: ${esc(d.name)}&lt;/h2&gt;
+    &lt;p style=&quot;color:var(--ink-soft);margin:0 0 22px;max-width:52ch&quot;&gt;Questions are drawn at random from this deck. Wrong choices come from the other cards, so the test gets harder as your deck grows.&lt;/p&gt;
+    ${lessonBox()}
+    &lt;div class=&quot;box&quot;&gt;
+      &lt;h3&gt;How many questions&lt;/h3&gt;
+      &lt;div class=&quot;chips&quot; id=&quot;countChips&quot;&gt;
+        ${counts.map(n=&gt;`&lt;button class=&quot;chip&quot; data-count=&quot;${n}&quot; aria-pressed=&quot;${quiz.cfg.count===n}&quot;&gt;${n===d.cards.length?&quot;All &quot;+n:n}&lt;/button&gt;`).join(&quot;&quot;)}
+      &lt;/div&gt;
+      &lt;div class=&quot;field&quot; style=&quot;max-width:160px;margin:14px 0 0&quot;&gt;
+        &lt;label for=&quot;customCount&quot;&gt;Or type a number&lt;/label&gt;
+        &lt;input type=&quot;number&quot; id=&quot;customCount&quot; min=&quot;1&quot; max=&quot;${d.cards.length}&quot; step=&quot;1&quot; value=&quot;${quiz.cfg.count}&quot;&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;box&quot;&gt;
+      &lt;h3&gt;Question styles&lt;/h3&gt;
+      &lt;p&gt;Pick at least one. Multiple choice needs four cards; typing is the strictest.&lt;/p&gt;
+      &lt;div class=&quot;chips&quot; id=&quot;typeChips&quot;&gt;
+        ${types.map(([k,label])=&gt;`&lt;button class=&quot;chip&quot; data-type=&quot;${k}&quot; aria-pressed=&quot;${quiz.cfg.types.includes(k)}&quot;&gt;${label}&lt;/button&gt;`).join(&quot;&quot;)}
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;button class=&quot;btn primary&quot; data-act=&quot;start-test&quot;&gt;Start pre-test&lt;/button&gt;`;
+}
+function normalize(s){
+  return String(s||&quot;&quot;).toLowerCase().normalize(&quot;NFD&quot;).replace(/[\u0300-\u036f]/g,&quot;&quot;)
+    .replace(/\b(a|an|the)\b/g,&quot; &quot;).replace(/[^a-z0-9\s]/g,&quot; &quot;).replace(/\s+/g,&quot; &quot;).trim();
+}
+function editDistance(a,b){
+  const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,j)=&gt;j), cur=new Array(n+1);
+  for(let i=1;i&lt;=m;i++){
+    cur[0]=i;
+    for(let j=1;j&lt;=n;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    }
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
+function gradeWritten(given, expected){
+  const g=normalize(given), e=normalize(expected);
+  if(!g) return &quot;wrong&quot;;
+  if(g===e) return &quot;right&quot;;
+  const tol = e.length&gt;12 ? 2 : e.length&gt;6 ? 1 : 0;
+  if(tol &amp;&amp; editDistance(g,e)&lt;=tol) return &quot;close&quot;;
+  return &quot;wrong&quot;;
+}
+function buildQuestions(d){
+  const cards=d.cards.filter(c=&gt;c.term&amp;&amp;c.def);
+  let types=quiz.cfg.types.slice();
+  if(cards.length&lt;4) types=types.filter(t=&gt;t!==&quot;mc&quot;);
+  if(!types.length) types=[&quot;written&quot;];
+  const pool = shuffle(cards).slice(0, Math.min(quiz.cfg.count, cards.length));
+  return pool.map(card=&gt;{
+    const kind = types[Math.floor(Math.random()*types.length)];
+    if(kind===&quot;mc&quot;){
+      const wrong = shuffle(cards.filter(c=&gt;c.id!==card.id)).slice(0,3).map(c=&gt;c.def);
+      return { kind, card, prompt:card.term, options:shuffle([card.def].concat(wrong)), answer:card.def };
+    }
+    if(kind===&quot;tf&quot;){
+      const flip = Math.random()&lt;0.5;
+      const other = shuffle(cards.filter(c=&gt;c.id!==card.id))[0];
+      const shown = flip &amp;&amp; other ? other.def : card.def;
+      return { kind, card, prompt:card.term, shown, options:[&quot;True&quot;,&quot;False&quot;], answer:(flip&amp;&amp;other)?&quot;False&quot;:&quot;True&quot; };
+    }
+    return { kind:&quot;written&quot;, card, prompt:card.def, answer:card.term };
+  });
+}
+function startTest(){
+  const d=deck(); if(!d) return;
+  quiz.qs = buildQuestions(d);
+  if(!quiz.qs.length){ toast(&quot;Fill in both sides of at least one card first.&quot;); return; }
+  quiz.i=0; quiz.results=[]; quiz.stage=&quot;run&quot;; quiz.picked=null; quiz.checked=false;
+  mounted=&quot;&quot;; render();
+}
+function paintQuestion(){
+  const q=quiz.qs[quiz.i];
+  const label = q.kind===&quot;mc&quot; ? &quot;Multiple choice&quot; : q.kind===&quot;tf&quot; ? &quot;True or false&quot; : &quot;Type the answer&quot;;
+  const pct = Math.round(quiz.i/quiz.qs.length*100);
+  let bodyHTML=&quot;&quot;;
+  if(q.kind===&quot;written&quot;){
+    bodyHTML = `&lt;input class=&quot;answer-input&quot; id=&quot;written&quot; autocomplete=&quot;off&quot; autocapitalize=&quot;off&quot; spellcheck=&quot;false&quot; placeholder=&quot;Your answer&quot;&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn primary&quot; data-act=&quot;check&quot;&gt;Check&lt;/button&gt;
+      &lt;button class=&quot;btn ghost&quot; data-act=&quot;skip&quot;&gt;Skip&lt;/button&gt;&lt;/div&gt;`;
+  }else{
+    const keys=&quot;ABCD&quot;;
+    bodyHTML = `&lt;div class=&quot;options&quot; id=&quot;options&quot;&gt;${q.options.map((o,n)=&gt;
+      `&lt;button class=&quot;option&quot; data-opt=&quot;${n}&quot;&gt;&lt;span class=&quot;key&quot;&gt;${keys[n]}&lt;/span&gt;&lt;span&gt;${esc(o)}&lt;/span&gt;&lt;/button&gt;`).join(&quot;&quot;)}&lt;/div&gt;`;
+  }
+  const promptText = q.kind===&quot;tf&quot;
+    ? `${esc(q.prompt)} — &lt;em&gt;${esc(q.shown)}&lt;/em&gt;`
+    : esc(q.prompt);
+  $(&quot;#panel&quot;).innerHTML = `
+    &lt;div class=&quot;meter&quot;&gt;&lt;i style=&quot;width:${pct}%&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    &lt;div class=&quot;meter-label&quot;&gt;&lt;span&gt;Question ${quiz.i+1} of ${quiz.qs.length}&lt;/span&gt;&lt;span&gt;${quiz.results.filter(r=&gt;r.ok).length} right so far&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;q-kind&quot; style=&quot;margin-top:20px&quot;&gt;${label}&lt;/div&gt;
+    &lt;div class=&quot;q-prompt&quot;&gt;${promptText}&lt;/div&gt;
+    ${bodyHTML}
+    &lt;div id=&quot;feedback&quot;&gt;&lt;/div&gt;`;
+  const w=$(&quot;#written&quot;); if(w) w.focus();
+}
+function answerQuestion(value){
+  if(quiz.checked) return;
+  const q=quiz.qs[quiz.i];
+  let ok=false, close=false;
+  if(q.kind===&quot;written&quot;){
+    const g=gradeWritten(value,q.answer);
+    ok = g!==&quot;wrong&quot;; close = g===&quot;close&quot;;
+  }else{
+    ok = value===q.answer;
+  }
+  quiz.checked=true;
+  quiz.results.push({ q, given:value, ok });
+  if(q.kind!==&quot;written&quot;){
+    $$(&quot;#options .option&quot;).forEach(btn=&gt;{
+      const text=q.options[Number(btn.dataset.opt)];
+      btn.disabled=true;
+      if(text===q.answer) btn.classList.add(&quot;correct&quot;);
+      else if(text===value) btn.classList.add(&quot;incorrect&quot;);
+    });
+  }else{
+    const inp=$(&quot;#written&quot;); if(inp) inp.disabled=true;
+  }
+  const last = quiz.i===quiz.qs.length-1;
+  const detail = ok
+    ? (close? `&lt;span&gt;Close enough — the exact term is “${esc(q.answer)}”.&lt;/span&gt;` : (q.kind===&quot;tf&quot;? `&lt;span&gt;${esc(q.card.term)}: ${esc(q.card.def)}&lt;/span&gt;`:&quot;&quot;))
+    : `&lt;span&gt;${esc(q.card.term)}: ${esc(q.card.def)}&lt;/span&gt;`;
+  $(&quot;#feedback&quot;).innerHTML = `
+    &lt;div class=&quot;verdict ${ok?&quot;ok&quot;:&quot;no&quot;}&quot;&gt;${ok?&quot;Correct&quot;:&quot;Not quite&quot;} ${detail}&lt;/div&gt;
+    &lt;button class=&quot;btn primary&quot; data-act=&quot;next-q&quot;&gt;${last?&quot;See results&quot;:&quot;Next question&quot;}&lt;/button&gt;`;
+  say(ok?&quot;Correct&quot;:&quot;Not quite&quot;);
+  $('[data-act=&quot;next-q&quot;]').focus();
+}
+function nextQuestion(){
+  const d=deck();
+  if(quiz.i===quiz.qs.length-1){
+    // fold results into what you know
+    if(d){
+      quiz.results.forEach(r=&gt;{
+        const c=d.cards.find(x=&gt;x.id===r.q.card.id);
+        if(c &amp;&amp; !r.ok) c.known=false;
+      });
+      d.lastScore = { right:quiz.results.filter(r=&gt;r.ok).length, total:quiz.results.length, at:Date.now() };
+      touch(d);
+    }
+    quiz.stage=&quot;results&quot;;
+  }else{
+    quiz.i++; quiz.checked=false;
+  }
+  mounted=&quot;&quot;; render();
+}
+function paintResults(d){
+  const right = quiz.results.filter(r=&gt;r.ok).length;
+  const total = quiz.results.length;
+  const pct = total? Math.round(right/total*100):0;
+  const missed = quiz.results.filter(r=&gt;!r.ok);
+  const verdict = pct&gt;=90? &quot;You're ready for this one.&quot;
+    : pct&gt;=70? &quot;Solid. Clean up the misses and you're set.&quot;
+    : pct&gt;=50? &quot;Half way there — the missed cards are where the work is.&quot;
+    : &quot;Worth another pass through the flashcards before testing again.&quot;;
+  $(&quot;#panel&quot;).innerHTML = `
+    &lt;div class=&quot;score&quot;&gt;${pct}%&lt;small&gt; · ${right} of ${total}&lt;/small&gt;&lt;/div&gt;
+    &lt;p style=&quot;max-width:44ch;margin:10px 0 22px;color:var(--ink-soft)&quot;&gt;${verdict}&lt;/p&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-bottom:26px&quot;&gt;
+      &lt;button class=&quot;btn primary&quot; data-act=&quot;retake&quot;&gt;Take it again&lt;/button&gt;
+      ${missed.length?'&lt;button class=&quot;btn&quot; data-act=&quot;study-missed&quot;&gt;Study the misses&lt;/button&gt;':&quot;&quot;}
+      &lt;button class=&quot;btn ghost&quot; data-act=&quot;test-setup&quot;&gt;Change settings&lt;/button&gt;
+    &lt;/div&gt;
+    ${missed.length? `&lt;h3 style=&quot;font-size:17px;margin-bottom:6px&quot;&gt;What you missed&lt;/h3&gt;
+      ${missed.map(r=&gt;`&lt;div class=&quot;review&quot;&gt;
+        &lt;div class=&quot;r-term&quot;&gt;${esc(r.q.card.term)}&lt;/div&gt;
+        &lt;div class=&quot;r-def&quot;&gt;${esc(r.q.card.def)}&lt;/div&gt;
+        ${r.given?`&lt;div class=&quot;r-yours&quot;&gt;You said: ${esc(r.given)}&lt;/div&gt;`:'&lt;div class=&quot;r-yours&quot;&gt;Skipped&lt;/div&gt;'}
+      &lt;/div&gt;`).join(&quot;&quot;)}` : `&lt;p style=&quot;color:var(--right)&quot;&gt;Nothing missed. Try a longer test or the typing style next.&lt;/p&gt;`}`;
+}
+
+/* ---------- card editor ---------- */
+function buildEdit(d){
+  $(&quot;#panel&quot;).innerHTML = `
+    &lt;div class=&quot;field&quot;&gt;
+      &lt;label for=&quot;deckName&quot;&gt;Deck name&lt;/label&gt;
+      &lt;input id=&quot;deckName&quot; value=&quot;${esc(d.name)}&quot;&gt;
+    &lt;/div&gt;
+    ${SAMPLE? `&lt;div class=&quot;box&quot;&gt;
+      &lt;h3&gt;Turn notes into cards&lt;/h3&gt;
+      &lt;p&gt;Paste a section of your reviewer or lecture notes. Claude drafts the cards; you edit anything that's off before you study.&lt;/p&gt;
+      &lt;textarea class=&quot;notes&quot; id=&quot;notes&quot; placeholder=&quot;Paste notes here…&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:10px&quot;&gt;
+        &lt;button class=&quot;btn primary&quot; data-act=&quot;ai-cards&quot;&gt;Draft cards&lt;/button&gt;
+        &lt;span id=&quot;aiStatus&quot; style=&quot;color:var(--ink-soft);font-size:15px&quot;&gt;&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;`:&quot;&quot;}
+    &lt;div class=&quot;box&quot;&gt;
+      &lt;h3&gt;Paste a list&lt;/h3&gt;
+      &lt;p&gt;One card per line, term and meaning separated by a tab, a semicolon, or &quot; - &quot;.&lt;/p&gt;
+      &lt;textarea class=&quot;notes&quot; id=&quot;bulk&quot; style=&quot;min-height:96px&quot; placeholder=&quot;Osmosis - movement of water across a membrane&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;row&quot; style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn&quot; data-act=&quot;bulk&quot;&gt;Add these cards&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;row&quot; style=&quot;justify-content:space-between;margin-bottom:10px&quot;&gt;
+      &lt;h3 style=&quot;font-size:17px&quot;&gt;${d.cards.length} card${d.cards.length===1?&quot;&quot;:&quot;s&quot;}&lt;/h3&gt;
+      &lt;button class=&quot;btn&quot; data-act=&quot;add-card&quot;&gt;Add a card&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;cardRows&quot;&gt;${d.cards.map(c=&gt;cardRow(c)).join(&quot;&quot;) || '&lt;p style=&quot;color:var(--ink-soft)&quot;&gt;No cards yet.&lt;/p&gt;'}&lt;/div&gt;
+    &lt;div class=&quot;row&quot; style=&quot;margin-top:28px;border-top:1px solid var(--line);padding-top:18px&quot;&gt;
+      &lt;button class=&quot;btn danger&quot; data-act=&quot;delete-deck&quot;&gt;Delete this deck&lt;/button&gt;
+    &lt;/div&gt;`;
+}
+function cardRow(c){
+  return `&lt;div class=&quot;card-row ${c.known?&quot;known&quot;:&quot;&quot;}&quot; data-card=&quot;${c.id}&quot;&gt;
+    &lt;textarea data-side=&quot;term&quot; placeholder=&quot;Term&quot; aria-label=&quot;Term&quot;&gt;${esc(c.term)}&lt;/textarea&gt;
+    &lt;textarea data-side=&quot;def&quot; placeholder=&quot;Meaning&quot; aria-label=&quot;Meaning&quot;&gt;${esc(c.def)}&lt;/textarea&gt;
+    &lt;div style=&quot;display:flex;align-items:flex-start;gap:4px&quot;&gt;
+      &lt;span class=&quot;known-dot&quot; title=&quot;${c.known?&quot;Marked known&quot;:&quot;Not yet known&quot;}&quot;&gt;&lt;/span&gt;
+      &lt;button class=&quot;icon-btn&quot; data-act=&quot;del-card&quot; aria-label=&quot;Delete card&quot;&gt;✕&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;`;
+}
+function parseBulk(text){
+  return text.split(/\r?\n/).map(l=&gt;l.trim()).filter(Boolean).map(line=&gt;{
+    const m = line.split(/\t|;|\s+[-–—]\s+|\s*:\s+/);
+    if(m.length&lt;2) return null;
+    const term=m[0].trim(), def=m.slice(1).join(&quot; - &quot;).trim();
+    return (term&amp;&amp;def)? {term,def} : null;
+  }).filter(Boolean);
+}
+async function aiCards(){
+  const d=deck(); if(!d||!SAMPLE) return;
+  const notes = ($(&quot;#notes&quot;).value||&quot;&quot;).trim();
+  const status = $(&quot;#aiStatus&quot;);
+  if(notes.length&lt;40){ status.textContent=&quot;Paste a bit more text first.&quot;; return; }
+  const btn = $('[data-act=&quot;ai-cards&quot;]');
+  btn.disabled=true; status.textContent=&quot;Reading your notes…&quot;;
+  try{
+    const out = await SAMPLE.json(
+      &quot;You are making study flashcards from a student's notes.\n&quot;+
+      &quot;Write up to 15 cards covering the most testable points. Each card has a \&quot;term\&quot; (a term, name, date, or short question) and a \&quot;definition\&quot; (one or two plain sentences answering it). Do not invent facts that are not in the notes. Write in the same language as the notes.\n&quot;+
+      &quot;Reply with only a JSON array, like [{\&quot;term\&quot;:\&quot;Osmosis\&quot;,\&quot;definition\&quot;:\&quot;Movement of water across a membrane.\&quot;}]\n\nNotes:\n&quot;+
+      notes.slice(0,6000)
+    );
+    const rows = (Array.isArray(out)? out : []).map(r=&gt;({term:String(r&amp;&amp;r.term||&quot;&quot;).trim(), def:String(r&amp;&amp;(r.definition||r.def)||&quot;&quot;).trim()})).filter(r=&gt;r.term&amp;&amp;r.def);
+    if(!rows.length){ status.textContent=&quot;No cards came back. Try a clearer chunk of notes.&quot;; return; }
+    rows.forEach(r=&gt; d.cards.push({id:uid(),term:r.term,def:r.def,known:false}));
+    touch(d);
+    $(&quot;#notes&quot;).value=&quot;&quot;;
+    status.textContent = rows.length+&quot; cards added below — check them over.&quot;;
+    study.order=[]; mounted=&quot;&quot;; render();
+    toast(rows.length+&quot; cards drafted&quot;);
+  }catch(e){
+    if(e.code===&quot;not_granted&quot;||e.code===&quot;sampling_disabled&quot;) status.textContent=&quot;Claude isn't available for this page.&quot;;
+    else if(e.code===&quot;rate_limited&quot;) status.textContent=&quot;Too many requests — wait a minute and try again.&quot;;
+    else if(e.code===&quot;prompt_too_large&quot;) status.textContent=&quot;That's a lot of text. Paste a smaller section.&quot;;
+    else if(e.code===&quot;invalid_json&quot;) status.textContent=&quot;The draft came back malformed. Try again.&quot;;
+    else status.textContent=&quot;That didn't work. Try again.&quot;;
+  }finally{ if(btn) btn.disabled=false; }
+}
+
+/* ================= events ================= */
+document.addEventListener(&quot;click&quot;, e=&gt;{
+  const deckBtn = e.target.closest(&quot;[data-deck]&quot;);
+  if(deckBtn){
+    state.deckId = deckBtn.dataset.deck;
+    study.order=[]; study.i=0; study.flipped=false; quiz=null;
+    document.body.classList.remove(&quot;drawer&quot;);
+    mounted=&quot;&quot;; render(); return;
+  }
+  const opt = e.target.closest(&quot;[data-opt]&quot;);
+  if(opt &amp;&amp; !opt.disabled){ answerQuestion(quiz.qs[quiz.i].options[Number(opt.dataset.opt)]); return; }
+  const chipC = e.target.closest(&quot;[data-count]&quot;);
+  if(chipC){
+    quiz.cfg.count=Number(chipC.dataset.count);
+    mounted=&quot;&quot;; render();
+    const inp=$(&quot;#customCount&quot;); if(inp) inp.value=quiz.cfg.count;
+    return;
+  }
+  const chipT = e.target.closest(&quot;[data-type]&quot;);
+  if(chipT){
+    const k=chipT.dataset.type, list=quiz.cfg.types;
+    if(list.includes(k)){ if(list.length&gt;1) quiz.cfg.types=list.filter(x=&gt;x!==k); }
+    else quiz.cfg.types=list.concat(k);
+    mounted=&quot;&quot;; render(); return;
+  }
+  if(e.target.closest(&quot;#card&quot;)){ study.flipped=!study.flipped; paintCard(); return; }
+
+  const act = e.target.closest(&quot;[data-act]&quot;);
+  if(!act) return;
+  const d=deck();
+  switch(act.dataset.act){
+    case &quot;new-deck&quot;: newDeck(); break;
+    case &quot;starter&quot;: makeDeck(&quot;General Biology — starter&quot;, STARTER); study.order=[]; mounted=&quot;&quot;; render(); toast(&quot;Starter deck added&quot;); break;
+    case &quot;go-edit&quot;: state.tab=&quot;edit&quot;; mounted=&quot;&quot;; render(); break;
+    case &quot;prev&quot;: moveCard(-1); break;
+    case &quot;next&quot;: moveCard(1); break;
+    case &quot;again&quot;: markCard(false); break;
+    case &quot;got&quot;: markCard(true); break;
+    case &quot;shuffle&quot;: study.order=shuffle(study.order); study.i=0; study.flipped=false; study.explain=&quot;&quot;; paintCard(); toast(&quot;Shuffled&quot;); break;
+    case &quot;unknown-only&quot;: {
+      if(!d) break;
+      const left=d.cards.filter(c=&gt;!c.known).map(c=&gt;c.id);
+      if(!left.length){ toast(&quot;Every card is marked known.&quot;); break; }
+      study.order=left; study.i=0; study.flipped=false; study.explain=&quot;&quot;; paintCard();
+      toast(left.length+&quot; cards left to learn&quot;); break;
+    }
+    case &quot;reset-known&quot;: {
+      if(!d) break;
+      d.cards.forEach(c=&gt;c.known=false); touch(d);
+      study.order=d.cards.map(c=&gt;c.id); study.i=0; study.flipped=false;
+      mounted=&quot;&quot;; render(); toast(&quot;Marks cleared&quot;); break;
+    }
+    case &quot;explain&quot;: explainCard(); break;
+    case &quot;start-test&quot;: startTest(); break;
+    case &quot;gen-test&quot;: generateTestFromLesson(); break;
+    case &quot;check&quot;: answerQuestion($(&quot;#written&quot;).value); break;
+    case &quot;skip&quot;: answerQuestion(&quot;&quot;); break;
+    case &quot;next-q&quot;: nextQuestion(); break;
+    case &quot;retake&quot;: startTest(); break;
+    case &quot;test-setup&quot;: quiz.stage=&quot;setup&quot;; mounted=&quot;&quot;; render(); break;
+    case &quot;study-missed&quot;: {
+      const ids=quiz.results.filter(r=&gt;!r.ok).map(r=&gt;r.q.card.id);
+      state.tab=&quot;study&quot;; study.order=ids; study.i=0; study.flipped=false; mounted=&quot;&quot;; render(); break;
+    }
+    case &quot;add-card&quot;: {
+      if(!d) break;
+      d.cards.push({id:uid(),term:&quot;&quot;,def:&quot;&quot;,known:false}); touch(d);
+      mounted=&quot;&quot;; render();
+      const rows=$$(&quot;#cardRows .card-row&quot;); const last=rows[rows.length-1];
+      if(last) last.querySelector(&quot;textarea&quot;).focus();
+      break;
+    }
+    case &quot;del-card&quot;: {
+      if(!d) break;
+      const row=act.closest(&quot;[data-card]&quot;);
+      d.cards=d.cards.filter(c=&gt;c.id!==row.dataset.card); touch(d);
+      study.order=[]; mounted=&quot;&quot;; render(); break;
+    }
+    case &quot;bulk&quot;: {
+      if(!d) break;
+      const rows=parseBulk($(&quot;#bulk&quot;).value);
+      if(!rows.length){ toast(&quot;Couldn't read any pairs from that.&quot;); break; }
+      rows.forEach(r=&gt; d.cards.push({id:uid(),term:r.term,def:r.def,known:false}));
+      touch(d); study.order=[]; mounted=&quot;&quot;; render(); toast(rows.length+&quot; cards added&quot;); break;
+    }
+    case &quot;ai-cards&quot;: aiCards(); break;
+    case &quot;delete-deck&quot;: {
+      if(!d) break;
+      if(confirm('Delete &quot;'+d.name+'&quot; and all its cards? This cannot be undone.')) removeDeck(d.id);
+      break;
+    }
+  }
+});
+document.addEventListener(&quot;input&quot;, e=&gt;{
+  if(e.target.id===&quot;customCount&quot;){
+    const d=deck(); if(!d||!quiz) return;
+    let n = Math.round(Number(e.target.value));
+    if(!Number.isFinite(n)) return;
+    n = Math.max(1, Math.min(d.cards.length, n));
+    quiz.cfg.count = n;
+    $$(&quot;#countChips .chip&quot;).forEach(c=&gt; c.setAttribute(&quot;aria-pressed&quot;, String(Number(c.dataset.count)===n)));
+    return;
+  }
+  const d=deck(); if(!d) return;
+  if(e.target.id===&quot;deckName&quot;){ d.name=e.target.value; touch(d); renderSidebar(); renderChip(); return; }
+  const row=e.target.closest(&quot;[data-card]&quot;);
+  if(row &amp;&amp; e.target.matches(&quot;textarea&quot;)){
+    const c=d.cards.find(x=&gt;x.id===row.dataset.card); if(!c) return;
+    c[e.target.dataset.side===&quot;term&quot;?&quot;term&quot;:&quot;def&quot;]=e.target.value;
+    touch(d);
+  }
+});
+document.addEventListener(&quot;keydown&quot;, e=&gt;{
+  if(e.target.matches(&quot;input,textarea&quot;)){
+    if(e.key===&quot;Enter&quot; &amp;&amp; e.target.id===&quot;written&quot;){ e.preventDefault(); answerQuestion(e.target.value); }
+    return;
+  }
+  if(state.tab===&quot;study&quot; &amp;&amp; deck() &amp;&amp; deck().cards.length){
+    if(e.code===&quot;Space&quot;){ e.preventDefault(); study.flipped=!study.flipped; paintCard(); }
+    else if(e.key===&quot;ArrowRight&quot;) moveCard(1);
+    else if(e.key===&quot;ArrowLeft&quot;) moveCard(-1);
+    else if(e.key===&quot;1&quot;) markCard(false);
+    else if(e.key===&quot;2&quot;) markCard(true);
+  }
+  if(state.tab===&quot;test&quot; &amp;&amp; quiz &amp;&amp; quiz.stage===&quot;run&quot; &amp;&amp; !quiz.checked){
+    const q=quiz.qs[quiz.i];
+    if(q.kind!==&quot;written&quot;){
+      const n=&quot;abcd&quot;.indexOf(e.key.toLowerCase());
+      if(n&gt;-1 &amp;&amp; q.options[n]) answerQuestion(q.options[n]);
+    }
+  }
+  if(state.tab===&quot;test&quot; &amp;&amp; quiz &amp;&amp; quiz.stage===&quot;run&quot; &amp;&amp; quiz.checked &amp;&amp; e.key===&quot;Enter&quot;){ e.preventDefault(); nextQuestion(); }
+});
+$(&quot;#tabs&quot;).addEventListener(&quot;click&quot;, e=&gt;{
+  const t=e.target.closest(&quot;.tab&quot;); if(!t) return;
+  state.tab=t.dataset.tab; mounted=&quot;&quot;; render();
+});
+$(&quot;#newDeckBtn&quot;).addEventListener(&quot;click&quot;, newDeck);
+$(&quot;#sampleDeckBtn&quot;).addEventListener(&quot;click&quot;, ()=&gt;{ makeDeck(&quot;General Biology — starter&quot;, STARTER); study.order=[]; mounted=&quot;&quot;; render(); toast(&quot;Starter deck added&quot;); });
+$(&quot;#drawerBtn&quot;).addEventListener(&quot;click&quot;, ()=&gt; document.body.classList.toggle(&quot;drawer&quot;));
+$(&quot;#overlay&quot;).addEventListener(&quot;click&quot;, ()=&gt; document.body.classList.remove(&quot;drawer&quot;));
+
+function applyTheme(mode){
+  document.documentElement.setAttribute(&quot;data-theme&quot;, mode===&quot;dark&quot;?&quot;dark&quot;:&quot;light&quot;);
+  try{ localStorage.setItem(&quot;repaso.theme&quot;, mode===&quot;dark&quot;?&quot;dark&quot;:&quot;light&quot;); }catch(e){}
+  const btn=$(&quot;#themeBtn&quot;);
+  if(btn) btn.textContent = mode===&quot;dark&quot; ? &quot;Daylight&quot; : &quot;Lights out&quot;;
+}
+try{
+  const saved = localStorage.getItem(&quot;repaso.theme&quot;);
+  applyTheme(saved===&quot;dark&quot;?&quot;dark&quot;:&quot;light&quot;);
+}catch(e){ applyTheme(&quot;light&quot;); }
+$(&quot;#themeBtn&quot;).addEventListener(&quot;click&quot;, ()=&gt;{
+  const next = document.documentElement.getAttribute(&quot;data-theme&quot;)===&quot;dark&quot; ? &quot;light&quot; : &quot;dark&quot;;
+  applyTheme(next);
+});
+
+/* ================= boot ================= */
+loadLocal();
+if(state.decks.length) state.deckId = state.decks[0].id;
+render();
+connect();
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
