@@ -1,0 +1,50 @@
+```
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repaso — flashcards and pre-tests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <button class="btn ghost drawer-btn" id="drawerBtn" aria-label="Show decks">Decks</button>
+    <div class="brand">Repaso</div>
+    <div class="brand-note">study hall · flashcards &amp; pre-tests</div>
+    <div class="spacer"></div>
+    <div class="deck-chip" id="deckChip"></div>
+    <button class="btn ghost" id="themeBtn" aria-label="Switch theme">Lights</button>
+  </header>
+
+  <nav class="sidebar" id="sidebar" aria-label="Decks">
+    <div class="side-head"><span>Your decks</span><span id="deckCount"></span></div>
+    <ul class="deck-list" id="deckList"></ul>
+    <div class="side-foot">
+      <button class="btn primary wide" id="newDeckBtn">New deck</button>
+      <button class="btn ghost wide" id="sampleDeckBtn">Add a starter deck</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="tabs" role="tablist" id="tabs">
+      <button class="tab" role="tab" data-tab="study" aria-selected="true">Flashcards</button>
+      <button class="tab" role="tab" data-tab="test" aria-selected="false">Pre-test</button>
+      <button class="tab" role="tab" data-tab="edit" aria-selected="false">Cards</button>
+    </div>
+    <div class="panel" id="panel"></div>
+  </main>
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="sr" id="live" aria-live="polite"></div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
+```
